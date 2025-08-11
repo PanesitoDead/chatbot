@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot Gemini</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+        input { width: 80%; }
+        button { width: 15%; }
+    </style>
+</head>
+<body>
+    <h2>Asistente Virtual</h2>
+    <div id="chat"></div>
+    <input type="text" id="msg" placeholder="Escribe algo...">
+    <button onclick="sendMessage()">Enviar</button>
+
+    <script>
+        async function sendMessage() {
+            const msg = document.getElementById("msg").value;
+            document.getElementById("chat").innerHTML += `<p><b>Tú:</b> ${msg}</p>`;
+            document.getElementById("msg").value = "";
+
+            const res = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: msg })
+            });
+
+            const data = await res.json();
+            const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Error";
+            document.getElementById("chat").innerHTML += `<p><b>Bot:</b> ${reply}</p>`;
+        }
+    </script>
+</body>
+</html>
